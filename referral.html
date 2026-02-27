@@ -103,7 +103,7 @@
         if (!session) window.location.href = 'login.html';
 
         // Set Link
-        const fullRefLink = `${window.location.origin}/signup.html?ref=${session.referralCode}`;
+        const fullRefLink = `${window.location.origin}/register.html?ref=${session.referralCode}`;
         document.getElementById('refLink').value = fullRefLink;
 
         async function loadReferralData() {
