@@ -1,0 +1,176 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Profile Settings | Green Naira</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;600;700;800&display=swap" rel="stylesheet">
+
+    <style>
+        :root { --primary: #16A34A; --slate: #0F172A; }
+        body { font-family: 'Plus Jakarta Sans', sans-serif; background-color: #020617; color: white; padding-bottom: 40px; }
+        .glass { background: rgba(255, 255, 255, 0.03); backdrop-filter: blur(10px); border: 1px solid rgba(255, 255, 255, 0.05); }
+        .form-input { background: rgba(255, 255, 255, 0.05); border: 1px solid rgba(255, 255, 255, 0.1); color: white; transition: all 0.3s ease; }
+        .form-input:focus { border-color: var(--primary); outline: none; background: rgba(255, 255, 255, 0.08); }
+        .loader { border: 2px solid rgba(255,255,255,0.3); border-top: 2px solid white; border-radius: 50%; width: 16px; height: 16px; animation: spin 1s linear infinite; display: none; }
+        @keyframes spin { 0% { transform: rotate(0deg); } 100% { transform: rotate(360deg); } }
+    </style>
+</head>
+<body>
+
+    <header class="p-6 flex items-center justify-between sticky top-0 z-50 bg-[#020617]/80 backdrop-blur-md">
+        <div class="flex items-center space-x-4">
+            <a href="dashboard.html" class="w-10 h-10 glass rounded-full flex items-center justify-center text-slate-400">
+                <i class="fas fa-arrow-left"></i>
+            </a>
+            <h1 class="text-xl font-bold">Profile</h1>
+        </div>
+        <button onclick="logout()" class="text-red-500 font-bold text-xs uppercase tracking-widest">Logout</button>
+    </header>
+
+    <main class="px-6 space-y-6">
+        
+        <!-- USER AVATAR & ID CARD -->
+        <div class="glass p-8 rounded-[32px] text-center relative overflow-hidden">
+            <div class="absolute top-0 right-0 w-32 h-32 bg-emerald-500/10 rounded-full blur-3xl -mr-16 -mt-16"></div>
+            <div class="w-20 h-20 bg-emerald-600 rounded-full mx-auto mb-4 flex items-center justify-center text-3xl font-black shadow-xl shadow-emerald-900/20">
+                <span id="avatarInitial">U</span>
+            </div>
+            <h2 id="displayFullName" class="text-xl font-bold">User Name</h2>
+            <p id="displayEmail" class="text-slate-500 text-xs mt-1">user@example.com</p>
+            <div class="mt-4 inline-block bg-white/5 px-4 py-1.5 rounded-full text-[10px] font-black text-emerald-500 border border-white/5 uppercase tracking-widest">
+                ID: <span id="displayUserId">-------</span>
+            </div>
+        </div>
+
+        <!-- SETTINGS FORM -->
+        <div class="glass p-6 rounded-[32px] space-y-8">
+            
+            <!-- Personal Info -->
+            <form id="profileForm" class="space-y-4">
+                <h3 class="text-xs font-black text-slate-400 uppercase tracking-widest ml-1">Personal Details</h3>
+                <div>
+                    <label class="block text-[10px] text-slate-500 mb-2 ml-1">Full Name</label>
+                    <input type="text" id="inputName" name="fullName" required class="form-input w-full px-5 py-4 rounded-2xl text-sm font-medium">
+                </div>
+                <div>
+                    <label class="block text-[10px] text-slate-500 mb-2 ml-1">Phone Number</label>
+                    <input type="tel" id="inputPhone" name="phone" required class="form-input w-full px-5 py-4 rounded-2xl text-sm font-medium">
+                </div>
+                <button type="submit" id="saveProfileBtn" class="w-full bg-[#16A34A] text-white py-4 rounded-2xl font-black text-sm flex items-center justify-center space-x-3 active:scale-95 transition">
+                    <span>SAVE CHANGES</span>
+                    <div id="profileLoader" class="loader"></div>
+                </button>
+            </form>
+
+            <div class="h-px bg-white/5"></div>
+
+            <!-- Password Change -->
+            <form id="passwordForm" class="space-y-4">
+                <h3 class="text-xs font-black text-slate-400 uppercase tracking-widest ml-1">Security</h3>
+                <div>
+                    <label class="block text-[10px] text-slate-500 mb-2 ml-1">New Password</label>
+                    <input type="password" id="inputPassword" name="newPassword" required placeholder="Minimum 6 characters" minlength="6" class="form-input w-full px-5 py-4 rounded-2xl text-sm font-medium">
+                </div>
+                <button type="submit" id="savePassBtn" class="w-full glass text-white py-4 rounded-2xl font-black text-sm flex items-center justify-center space-x-3 active:scale-95 transition border-emerald-500/20">
+                    <span>UPDATE PASSWORD</span>
+                    <div id="passLoader" class="loader"></div>
+                </button>
+            </form>
+
+        </div>
+
+    </main>
+
+    <script>
+        const scriptURL = 'https://script.google.com/macros/s/AKfycbwVppqvVnjMMZ-bT_gQSUbeeOnirKBYKCT0L8rsD78Qdyw-2AD5eaO9jlRTmUZohMSR/exec';
+        const session = JSON.parse(localStorage.getItem('greennaira_session'));
+
+        if (!session) window.location.href = 'login.html';
+
+        // Initialize UI with Session Data
+        function initUI() {
+            document.getElementById('displayFullName').innerText = session.fullName;
+            document.getElementById('displayEmail').innerText = session.email;
+            document.getElementById('displayUserId').innerText = session.userId;
+            document.getElementById('avatarInitial').innerText = session.fullName.charAt(0).toUpperCase();
+            
+            document.getElementById('inputName').value = session.fullName;
+            document.getElementById('inputPhone').value = session.phone || '';
+        }
+
+        // Profile Update Handler
+        document.getElementById('profileForm').addEventListener('submit', async function(e) {
+            e.preventDefault();
+            const btn = document.getElementById('saveProfileBtn');
+            const loader = document.getElementById('profileLoader');
+            
+            setLoading(btn, loader, true);
+
+            const formData = new FormData(this);
+            formData.append('userId', session.userId);
+            formData.append('action', 'updateProfile');
+
+            try {
+                const response = await fetch(scriptURL, { method: 'POST', body: formData });
+                const result = await response.json();
+                
+                if (result.status === 'success') {
+                    // Update session
+                    session.fullName = document.getElementById('inputName').value;
+                    session.phone = document.getElementById('inputPhone').value;
+                    localStorage.setItem('greennaira_session', JSON.stringify(session));
+                    initUI();
+                    alert("Profile updated successfully!");
+                } else {
+                    alert(result.message);
+                }
+            } catch (err) { alert("Network error"); }
+            setLoading(btn, loader, false);
+        });
+
+        // Password Update Handler
+        document.getElementById('passwordForm').addEventListener('submit', async function(e) {
+            e.preventDefault();
+            const btn = document.getElementById('savePassBtn');
+            const loader = document.getElementById('passLoader');
+            
+            setLoading(btn, loader, true);
+
+            const formData = new FormData(this);
+            formData.append('userId', session.userId);
+            formData.append('action', 'updatePassword');
+
+            try {
+                const response = await fetch(scriptURL, { method: 'POST', body: formData });
+                const result = await response.json();
+                
+                if (result.status === 'success') {
+                    alert("Password changed successfully!");
+                    document.getElementById('inputPassword').value = '';
+                } else {
+                    alert(result.message);
+                }
+            } catch (err) { alert("Network error"); }
+            setLoading(btn, loader, false);
+        });
+
+        function setLoading(btn, loader, isLoading) {
+            btn.disabled = isLoading;
+            loader.style.display = isLoading ? 'block' : 'none';
+            btn.querySelector('span').style.opacity = isLoading ? '0.5' : '1';
+        }
+
+        function logout() {
+            if(confirm("Are you sure you want to logout?")) {
+                localStorage.removeItem('greennaira_session');
+                window.location.href = 'login.html';
+            }
+        }
+
+        initUI();
+    </script>
+</body>
+</html>

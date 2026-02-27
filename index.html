@@ -1,0 +1,290 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    
+    <!-- PRIMARY SEO TAGS -->
+    <title>Green Naira | Modern Investing for Every Nigerian | No Minimum Deposit</title>
+    <meta name="description" content="Green Naira is Nigeria's most accessible investment platform. Grow your money with secure technology, transparent daily earnings, and zero minimum deposit. Start your financial journey today.">
+    <meta name="keywords" content="Green Naira, invest in Nigeria, Nigerian fintech, grow money Nigeria, secure investment Lagos, passive income Nigeria, no minimum deposit investment">
+    <meta name="author" content="Green Naira Financial Technologies">
+    <link rel="canonical" href="https://greennaira.vercel.app/">
+
+    <!-- OPEN GRAPH / FACEBOOK -->
+    <meta property="og:type" content="website">
+    <meta property="og:url" content="https://greennaira.vercel.app/">
+    <meta property="og:title" content="Green Naira | Smart Investing Made Accessible">
+    <meta property="og:description" content="Join thousands of Nigerians growing their wealth with simple, structured, and secure investment tools. Start with any amount.">
+    <meta property="og:image" content="green.jpg">
+
+    <!-- TWITTER -->
+    <meta property="twitter:card" content="summary_large_image">
+    <meta property="twitter:url" content="https://greennaira.vercel.app">
+    <meta property="twitter:title" content="Green Naira | Your Future, Funded Simply">
+    <meta property="twitter:description" content="The modern way for Nigerians to invest. Secure, transparent, and rewarding. No minimums, just growth.">
+    <meta property="twitter:image" content="green.jpg">
+
+    <!-- FAVICON -->
+    <link rel="icon" type="image/png" href="green.jpg">
+
+    <!-- STYLES & FONTS -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700;800&display=swap" rel="stylesheet">
+
+    <style>
+        :root {
+            --primary: #16A34A;
+            --secondary: #065F46;
+            --accent: #FACC15;
+            --slate: #0F172A;
+        }
+        body {
+            font-family: 'Inter', sans-serif;
+            scroll-behavior: smooth;
+        }
+        .bg-deep-slate { background-color: var(--slate); }
+        .text-emerald { color: var(--primary); }
+        .bg-emerald { background-color: var(--primary); }
+        .text-gold { color: var(--accent); }
+        .bg-gold { background-color: var(--accent); }
+        
+        .gradient-text {
+            background: linear-gradient(135deg, #16A34A 0%, #FACC15 100%);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+        }
+
+        .hover-lift {
+            transition: transform 0.2s ease-in-out;
+        }
+        .hover-lift:hover {
+            transform: translateY(-5px);
+        }
+
+        .feature-card {
+            border: 1px solid rgba(226, 232, 240, 0.8);
+            transition: all 0.3s ease;
+        }
+        .feature-card:hover {
+            border-color: var(--primary);
+            box-shadow: 0 10px 30px -10px rgba(22, 163, 74, 0.1);
+        }
+    </style>
+</head>
+<body class="bg-white text-slate-900">
+
+    <!-- HEADER / NAV -->
+    <header>
+        <nav class="fixed w-full z-50 bg-white/90 backdrop-blur-md border-b border-gray-100">
+            <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+                <div class="flex justify-between items-center h-20">
+                    <div class="flex items-center space-x-2">
+                        <div class="bg-emerald p-2 rounded-lg" aria-hidden="true">
+                            <i class="fas fa-leaf text-white text-xl"></i>
+                        </div>
+                        <span class="text-2xl font-bold text-slate-900">Green<span class="text-emerald">Naira</span></span>
+                    </div>
+                    
+                    <div class="hidden md:flex space-x-8 font-medium">
+                        <a href="#about" class="hover:text-emerald transition">About</a>
+                        <a href="#features" class="hover:text-emerald transition">How it Works</a>
+                        <a href="#security" class="hover:text-emerald transition">Security</a>
+                    </div>
+
+                    <div class="flex items-center space-x-4">
+                        <a href="register.html" class="bg-emerald text-white px-8 py-3 rounded-full font-bold hover:bg-emerald/90 transition shadow-lg shadow-emerald/20">
+                            Join Now
+                        </a>
+                    </div>
+                </div>
+            </div>
+        </nav>
+    </header>
+
+    <main>
+        <!-- HERO SECTION -->
+        <section class="pt-32 pb-20 lg:pt-48 lg:pb-32 bg-deep-slate text-white relative overflow-hidden">
+            <div class="absolute top-0 right-0 w-1/3 h-full bg-emerald/10 blur-[120px] rounded-full" aria-hidden="true"></div>
+            <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 relative z-10">
+                <div class="grid lg:grid-cols-2 gap-16 items-center">
+                    <div>
+                        <span class="inline-block bg-emerald/20 border border-emerald/50 text-emerald-400 px-4 py-1 rounded-full text-xs font-bold uppercase tracking-widest mb-6">
+                            Smart Investing for Everyone
+                        </span>
+                        <h1 class="text-5xl lg:text-7xl font-extrabold leading-tight mb-6">
+                            Grow Your Wealth <br>
+                            <span class="gradient-text">On Your Terms.</span>
+                        </h1>
+                        <p class="text-slate-400 text-lg lg:text-xl mb-10 max-w-lg leading-relaxed">
+                            Green Naira is a modern Nigerian platform designed to help you grow your money through simple, transparent, and structured systems. <b>No minimums. No complexity. Just growth.</b>
+                        </p>
+                        <div class="flex flex-col sm:flex-row space-y-4 sm:space-y-0 sm:space-x-4">
+                            <a href="register.html" class="bg-gold text-slate-900 px-10 py-4 rounded-xl font-bold text-lg text-center hover-lift shadow-xl shadow-gold/10">
+                                Start With Any Amount
+                            </a>
+                        </div>
+                        <div class="mt-12 flex items-center space-x-6">
+                            <div class="flex items-center space-x-2">
+                                <i class="fas fa-shield-check text-emerald"></i>
+                                <span class="text-sm text-slate-400">Secure Technology</span>
+                            </div>
+                            <div class="flex items-center space-x-2">
+                                <i class="fas fa-bolt text-gold"></i>
+                                <span class="text-sm text-slate-400">Instant Access</span>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="relative hidden lg:block">
+                        <div class="bg-emerald/5 p-8 rounded-[40px] border border-white/5 backdrop-blur-sm">
+                            <div class="bg-white rounded-3xl p-8 shadow-2xl">
+                                <div class="flex justify-between items-center mb-10">
+                                    <h2 class="text-slate-900 font-bold text-xl">Earnings Tracker</h2>
+                                    <span class="text-emerald font-bold">+₦14,200.00 Today</span>
+                                </div>
+                                <div class="space-y-6">
+                                    <div class="h-4 w-full bg-slate-100 rounded-full overflow-hidden">
+                                        <div class="h-full bg-emerald w-3/4"></div>
+                                    </div>
+                                    <div class="grid grid-cols-2 gap-4">
+                                        <div class="p-4 bg-slate-50 rounded-2xl">
+                                            <p class="text-xs text-slate-500 mb-1">Total Profits</p>
+                                            <p class="text-lg font-bold text-slate-900">₦450,000</p>
+                                        </div>
+                                        <div class="p-4 bg-slate-50 rounded-2xl">
+                                            <p class="text-xs text-slate-500 mb-1">Referral Bonuses</p>
+                                            <p class="text-lg font-bold text-slate-900">₦25,000</p>
+                                        </div>
+                                    </div>
+                                    <a href="register.html" class="block w-full py-4 bg-emerald text-white rounded-2xl font-bold text-center">Withdraw to Bank</a>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- CORE MISSION -->
+        <section id="about" class="py-24 bg-white">
+            <div class="max-w-4xl mx-auto px-4 text-center">
+                <h2 class="text-emerald font-bold uppercase tracking-widest text-sm mb-4">Our Mission</h2>
+                <h3 class="text-3xl md:text-4xl font-extrabold text-slate-900 mb-8">Smart investing accessible, reliable, and rewarding for everyone. 💚</h3>
+                <p class="text-slate-600 text-lg leading-relaxed">
+                    We believe that everyone deserves a chance to participate in wealth creation. By combining secure technology with a user-friendly interface, Green Naira removes the barriers that traditionally keep people from investing.
+                </p>
+            </div>
+        </section>
+
+        <!-- FEATURES GRID -->
+        <section id="features" class="py-24 bg-slate-50">
+            <div class="max-w-7xl mx-auto px-4">
+                <div class="text-center mb-16">
+                    <h2 class="text-3xl font-bold text-slate-900">Why Green Naira?</h2>
+                </div>
+                <div class="grid md:grid-cols-2 lg:grid-cols-4 gap-8">
+                    <!-- Feature 1 -->
+                    <div class="feature-card bg-white p-8 rounded-3xl">
+                        <div class="w-14 h-14 bg-emerald/10 text-emerald rounded-2xl flex items-center justify-center mb-6 text-xl">
+                            <i class="fas fa-microchip"></i>
+                        </div>
+                        <h4 class="font-bold text-xl mb-3">Secure Tech</h4>
+                        <p class="text-slate-500 text-sm leading-relaxed">Built with bank-grade encryption to ensure your data and funds are always protected.</p>
+                    </div>
+                    <!-- Feature 2 -->
+                    <div class="feature-card bg-white p-8 rounded-3xl">
+                        <div class="w-14 h-14 bg-gold/10 text-gold-600 rounded-2xl flex items-center justify-center mb-6 text-xl">
+                            <i class="fas fa-eye"></i>
+                        </div>
+                        <h4 class="font-bold text-xl mb-3">Transparent</h4>
+                        <p class="text-slate-500 text-sm leading-relaxed">No hidden fees or complex jargon. Track every Naira you earn in real-time.</p>
+                    </div>
+                    <!-- Feature 3 -->
+                    <div class="feature-card bg-white p-8 rounded-3xl">
+                        <div class="w-14 h-14 bg-emerald/10 text-emerald rounded-2xl flex items-center justify-center mb-6 text-xl">
+                            <i class="fas fa-hand-holding-usd"></i>
+                        </div>
+                        <h4 class="font-bold text-xl mb-3">Instant Payouts</h4>
+                        <p class="text-slate-500 text-sm leading-relaxed">Withdraw your profits directly to your Nigerian bank account with just a few taps.</p>
+                    </div>
+                    <!-- Feature 4 -->
+                    <div class="feature-card bg-white p-8 rounded-3xl">
+                        <div class="w-14 h-14 bg-gold/10 text-gold-600 rounded-2xl flex items-center justify-center mb-6 text-xl">
+                            <i class="fas fa-users"></i>
+                        </div>
+                        <h4 class="font-bold text-xl mb-3">Referral Perks</h4>
+                        <p class="text-slate-500 text-sm leading-relaxed">Earn extra bonuses by inviting your friends to join the green movement.</p>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- SECURITY SECTION -->
+        <section id="security" class="py-24 bg-deep-slate text-white">
+            <div class="max-w-7xl mx-auto px-4 lg:flex items-center gap-20">
+                <div class="lg:w-1/2 mb-12 lg:mb-0">
+                    <h2 class="text-emerald font-bold mb-4">Security First</h2>
+                    <h3 class="text-4xl font-extrabold mb-6">Your peace of mind is our priority.</h3>
+                    <div class="space-y-6">
+                        <div class="flex items-start space-x-4">
+                            <div class="mt-1 text-emerald"><i class="fas fa-check-circle"></i></div>
+                            <p class="text-slate-400">Multi-factor authentication for every login and withdrawal.</p>
+                        </div>
+                        <div class="flex items-start space-x-4">
+                            <div class="mt-1 text-emerald"><i class="fas fa-check-circle"></i></div>
+                            <p class="text-slate-400">Regular security audits to stay ahead of modern threats.</p>
+                        </div>
+                        <div class="flex items-start space-x-4">
+                            <div class="mt-1 text-emerald"><i class="fas fa-check-circle"></i></div>
+                            <p class="text-slate-400">Encrypted data storage that keeps your personal info private.</p>
+                        </div>
+                    </div>
+                </div>
+                <div class="lg:w-1/2 bg-white/5 p-8 rounded-[40px] border border-white/10 text-center">
+                    <h4 class="text-2xl font-bold mb-6">Ready to start?</h4>
+                    <p class="text-slate-400 mb-8">Join thousands of Nigerians building wealth today. No paperwork, no minimum limits.</p>
+                    <a href="register.html" class="inline-block bg-emerald text-white w-full py-5 rounded-2xl font-bold text-xl hover:bg-emerald/90 shadow-2xl shadow-emerald/20 transition">Create Free Account</a>
+                </div>
+            </div>
+        </section>
+    </main>
+
+    <!-- FOOTER -->
+    <footer class="bg-white pt-20 pb-10 border-t border-slate-100">
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+            <div class="grid md:grid-cols-3 gap-12 mb-16">
+                <div>
+                    <div class="flex items-center space-x-2 mb-6">
+                        <div class="bg-emerald p-2 rounded-lg">
+                            <i class="fas fa-leaf text-white text-sm"></i>
+                        </div>
+                        <span class="text-xl font-bold text-slate-900">Green<span class="text-emerald">Naira</span></span>
+                    </div>
+                    <p class="text-slate-500 text-sm max-w-xs">Making smart investing accessible, reliable, and rewarding for every Nigerian.</p>
+                </div>
+                <div>
+                    <h5 class="font-bold mb-6">Navigation</h5>
+                    <ul class="space-y-4 text-slate-500 text-sm">
+                        <li><a href="#about" class="hover:text-emerald">About Us</a></li>
+                        <li><a href="#features" class="hover:text-emerald">How it Works</a></li>
+                        <li><a href="#security" class="hover:text-emerald">Security</a></li>
+                    </ul>
+                </div>
+                <div>
+                    <h5 class="font-bold mb-6">Legal & Support</h5>
+                    <ul class="space-y-4 text-slate-500 text-sm">
+                        <li><a href="#" class="hover:text-emerald">Privacy Policy</a></li>
+                        <li><a href="#" class="hover:text-emerald">Terms of Use</a></li>
+                        <li><a href="mailto:support@greennaira.com" class="text-emerald font-bold">support@greennaira.com</a></li>
+                    </ul>
+                </div>
+            </div>
+            <div class="border-t border-slate-100 pt-8 text-center text-slate-400 text-xs">
+                <p>&copy; 2024 Green Naira Financial Technologies. All rights reserved.</p>
+            </div>
+        </div>
+    </footer>
+
+</body>
+</html>

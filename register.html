@@ -1,0 +1,237 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Create Your Account | Green Naira</title>
+    
+    <!-- SEO -->
+    <meta name="description" content="Join Green Naira today and start growing your wealth with any amount. Secure, transparent, and built for Nigerians.">
+    <meta property="og:image" content="green.jpg">
+    
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700;800&display=swap" rel="stylesheet">
+
+    <style>
+        :root { 
+            --primary: #16A34A; 
+            --secondary: #065F46; 
+            --accent: #FACC15; 
+            --slate: #0F172A; 
+        }
+        body { 
+            font-family: 'Inter', sans-serif; 
+            background-color: var(--slate); 
+            color: white; 
+            overflow-x: hidden;
+        }
+        .form-input { 
+            background: rgba(255, 255, 255, 0.05); 
+            border: 1px solid rgba(255, 255, 255, 0.1); 
+            color: white; 
+            transition: all 0.3s ease; 
+        }
+        .form-input:focus { 
+            border-color: var(--primary); 
+            background: rgba(255, 255, 255, 0.08); 
+            outline: none; 
+            box-shadow: 0 0 0 4px rgba(22, 163, 74, 0.1);
+        }
+        .loader { 
+            border: 3px solid rgba(255,255,255,0.3); 
+            border-top: 3px solid white; 
+            border-radius: 50%; 
+            width: 20px; 
+            height: 20px; 
+            animation: spin 1s linear infinite; 
+            display: none; 
+        }
+        @keyframes spin { 0% { transform: rotate(0deg); } 100% { transform: rotate(360deg); } }
+
+        .btn-secondary-outline {
+            border: 1px solid rgba(255, 255, 255, 0.2);
+            transition: all 0.3s ease;
+        }
+        .btn-secondary-outline:hover {
+            border-color: var(--accent);
+            color: var(--accent);
+            transform: translateY(-2px);
+        }
+    </style>
+</head>
+<body class="flex flex-col min-h-screen">
+
+    <!-- NAVIGATION -->
+    <nav class="p-6 border-b border-white/5 bg-slate-900/50 backdrop-blur-md sticky top-0 z-50">
+        <div class="max-w-7xl mx-auto flex justify-between items-center">
+            <a href="index.html" class="flex items-center space-x-2 group">
+                <div class="bg-[#16A34A] p-2 rounded-xl group-hover:scale-110 transition-transform">
+                    <i class="fas fa-leaf text-white text-sm"></i>
+                </div>
+                <span class="text-xl font-bold tracking-tight">Green<span class="text-[#16A34A]">Naira</span></span>
+            </a>
+            
+            <!-- ENHANCED LOGIN BUTTON -->
+            <a href="login.html" class="btn-secondary-outline px-6 py-2.5 rounded-full text-sm font-bold flex items-center space-x-2">
+                <span>Already a member?</span>
+                <span class="text-[#FACC15]">Login</span>
+                <i class="fas fa-sign-in-alt text-xs"></i>
+            </a>
+        </div>
+    </nav>
+
+    <main class="flex-grow flex items-center justify-center px-4 py-12">
+        <div class="w-full max-w-xl">
+            <div class="text-center mb-10">
+                <div class="inline-block bg-[#16A34A]/20 text-[#16A34A] px-4 py-1 rounded-full text-xs font-bold uppercase tracking-widest mb-4">
+                    New Account
+                </div>
+                <h1 class="text-4xl font-extrabold mb-3">Join the Future 🚀</h1>
+                <p class="text-slate-400">Start your investment journey in less than 2 minutes.</p>
+            </div>
+
+            <!-- FORM START -->
+            <form id="registerForm" class="grid grid-cols-1 md:grid-cols-2 gap-5 bg-white/5 p-8 rounded-[32px] border border-white/5 shadow-2xl">
+                <div class="md:col-span-2">
+                    <label class="block text-slate-400 text-[10px] font-black uppercase tracking-widest mb-2 ml-1">Full Name</label>
+                    <input type="text" name="fullName" required placeholder="Enter full name" class="form-input w-full px-5 py-4 rounded-2xl">
+                </div>
+                <div>
+                    <label class="block text-slate-400 text-[10px] font-black uppercase tracking-widest mb-2 ml-1">Email Address</label>
+                    <input type="email" name="email" required placeholder="email@example.com" class="form-input w-full px-5 py-4 rounded-2xl">
+                </div>
+                <div>
+                    <label class="block text-slate-400 text-[10px] font-black uppercase tracking-widest mb-2 ml-1">Phone Number</label>
+                    <input type="tel" name="phone" required placeholder="080 000 0000" class="form-input w-full px-5 py-4 rounded-2xl">
+                </div>
+                <div>
+                    <label class="block text-slate-400 text-[10px] font-black uppercase tracking-widest mb-2 ml-1">Username</label>
+                    <input type="text" name="username" required placeholder="username" class="form-input w-full px-5 py-4 rounded-2xl">
+                </div>
+                <div>
+                    <label class="block text-slate-400 text-[10px] font-black uppercase tracking-widest mb-2 ml-1">Referral Code</label>
+                    <input type="text" id="referredBy" name="referredBy" placeholder="None" class="form-input w-full px-5 py-4 rounded-2xl">
+                </div>
+                <div class="md:col-span-1">
+                    <label class="block text-slate-400 text-[10px] font-black uppercase tracking-widest mb-2 ml-1">Create Password</label>
+                    <input type="password" id="password" name="password" required class="form-input w-full px-5 py-4 rounded-2xl">
+                </div>
+                <div class="md:col-span-1">
+                    <label class="block text-slate-400 text-[10px] font-black uppercase tracking-widest mb-2 ml-1">Confirm Password</label>
+                    <input type="password" id="confirmPassword" required class="form-input w-full px-5 py-4 rounded-2xl">
+                </div>
+
+                <div class="md:col-span-2 mt-4">
+                    <button type="submit" id="submitBtn" class="w-full bg-[#16A34A] text-white py-5 rounded-2xl font-black text-lg flex items-center justify-center space-x-3 hover:bg-[#15803d] transition-all transform hover:scale-[1.02] active:scale-95 shadow-xl shadow-green-900/20">
+                        <span id="btnText">CREATE MY ACCOUNT</span>
+                        <div id="btnLoader" class="loader"></div>
+                    </button>
+                    
+                    <div class="mt-8 pt-6 border-t border-white/5 flex flex-col items-center space-y-4">
+                        <a href="login.html" class="text-slate-400 hover:text-[#FACC15] font-bold text-sm transition flex items-center space-x-2">
+                            <span>Already have an account? Log in here</span>
+                            <i class="fas fa-chevron-right text-[10px]"></i>
+                        </a>
+                        <a href="forgot-password.html" class="text-slate-500 hover:text-white text-xs transition">
+                            Help! I forgot my password
+                        </a>
+                    </div>
+                </div>
+            </form>
+        </div>
+    </main>
+
+    <!-- CUSTOM ALERT MODAL -->
+    <div id="customAlert" class="fixed inset-0 z-[100] hidden items-center justify-center px-4 bg-slate-900/95 backdrop-blur-xl">
+        <div class="bg-white rounded-[40px] w-full max-w-sm overflow-hidden shadow-2xl transform scale-95 transition-all duration-300">
+            <div id="alertHeader" class="bg-[#16A34A] pt-10 pb-6 text-center text-white">
+                <div class="w-20 h-20 bg-white/20 rounded-full flex items-center justify-center mx-auto mb-4">
+                    <i id="alertIcon" class="fas fa-check-circle text-4xl"></i>
+                </div>
+                <h3 id="alertTitle" class="text-2xl font-black">Success!</h3>
+            </div>
+            <div class="p-10 text-center">
+                <p id="alertMessage" class="text-slate-600 mb-8 font-medium leading-relaxed"></p>
+                <button onclick="closeAlert()" id="alertBtn" class="w-full py-4 bg-slate-900 text-white rounded-2xl font-black hover:bg-black transition-all transform active:scale-95">
+                    Got it!
+                </button>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        const scriptURL = 'https://script.google.com/macros/s/AKfycbyUbtggNfTwGJSA4G08ps10qgkuc_Y9foqYcKi6iWZFUnJI9nAy3kzjNkCEBwmwFVza/exec';
+
+        window.onload = () => {
+            const urlParams = new URLSearchParams(window.location.search);
+            const refCode = urlParams.get('ref');
+            if (refCode) {
+                const refInput = document.getElementById('referredBy');
+                refInput.value = refCode;
+                refInput.classList.add('border-[#16A34A]');
+            }
+        };
+
+        function showAlert(title, message, type = 'success') {
+            const modal = document.getElementById('customAlert');
+            const header = document.getElementById('alertHeader');
+            const icon = document.getElementById('alertIcon');
+            document.getElementById('alertTitle').innerText = title;
+            document.getElementById('alertMessage').innerText = message;
+
+            if (type === 'error') {
+                header.className = 'bg-red-500 pt-10 pb-6 text-center text-white';
+                icon.className = 'fas fa-times-circle text-4xl';
+            } else {
+                header.className = 'bg-[#16A34A] pt-10 pb-6 text-center text-white';
+                icon.className = 'fas fa-check-circle text-4xl';
+            }
+
+            modal.classList.remove('hidden');
+            modal.classList.add('flex');
+            setTimeout(() => modal.firstElementChild.classList.remove('scale-95'), 10);
+        }
+
+        function closeAlert() {
+            const modal = document.getElementById('customAlert');
+            modal.classList.add('hidden');
+            modal.classList.remove('flex');
+        }
+
+        document.getElementById('registerForm').addEventListener('submit', async function(e) {
+            e.preventDefault();
+            const submitBtn = document.getElementById('submitBtn');
+            const btnText = document.getElementById('btnText');
+            const loader = document.getElementById('btnLoader');
+
+            if (document.getElementById('password').value !== document.getElementById('confirmPassword').value) {
+                return showAlert('Passwords Mismatch', 'The passwords you entered do not match. Please re-enter them.', 'error');
+            }
+
+            submitBtn.disabled = true;
+            btnText.innerText = "CREATING ACCOUNT...";
+            loader.style.display = "block";
+
+            try {
+                const formData = new FormData(this);
+                const response = await fetch(scriptURL, { method: 'POST', body: formData });
+                const result = await response.json();
+
+                if (result.status === 'success') {
+                    showAlert('Account Created!', 'Welcome to the Green Naira family. Redirecting you to login...', 'success');
+                    setTimeout(() => window.location.href = 'login.html', 3000);
+                } else {
+                    showAlert('Oops!', result.message, 'error');
+                }
+            } catch (error) {
+                showAlert('Connection Error', 'We could not reach the server. Please check your data connection.', 'error');
+            } finally {
+                submitBtn.disabled = false;
+                btnText.innerText = "CREATE MY ACCOUNT";
+                loader.style.display = "none";
+            }
+        });
+    </script>
+</body>
+</html>

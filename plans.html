@@ -1,0 +1,188 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Invest | Green Naira</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;600;700;800&display=swap" rel="stylesheet">
+
+    <style>
+        :root { --primary: #16A34A; --secondary: #065F46; --accent: #FACC15; --slate: #0F172A; }
+        body { font-family: 'Plus Jakarta Sans', sans-serif; background-color: #020617; color: white; padding-bottom: 100px; }
+        .glass { background: rgba(255, 255, 255, 0.03); backdrop-filter: blur(10px); border: 1px solid rgba(255, 255, 255, 0.05); }
+        .plan-card { transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1); position: relative; overflow: hidden; }
+        .plan-card:hover { transform: translateY(-5px); border-color: var(--primary); background: rgba(22, 163, 74, 0.05); }
+        .roi-badge { background: linear-gradient(135deg, #16A34A 0%, #065F46 100%); }
+        .bottom-nav { background: rgba(15, 23, 42, 0.8); backdrop-filter: blur(20px); border-top: 1px solid rgba(255,255,255,0.1); }
+        .loader { border: 2px solid rgba(255,255,255,0.3); border-top: 2px solid white; border-radius: 50%; width: 16px; height: 16px; animation: spin 1s linear infinite; display: inline-block; }
+        @keyframes spin { 0% { transform: rotate(0deg); } 100% { transform: rotate(360deg); } }
+    </style>
+</head>
+<body>
+
+    <header class="p-6">
+        <h1 class="text-2xl font-extrabold">Investment Plans</h1>
+        <p class="text-slate-400 text-sm">Choose a plan to grow your wealth</p>
+    </header>
+
+    <main class="px-6 space-y-6">
+        <!-- BALANCE PREVIEW -->
+        <div class="glass p-4 rounded-2xl flex justify-between items-center">
+            <span class="text-slate-400 text-xs font-bold uppercase">Your Balance</span>
+            <span id="currentBalance" class="text-emerald-500 font-bold">₦0.00</span>
+        </div>
+
+        <!-- PLANS CONTAINER -->
+        <div id="plansGrid" class="grid grid-cols-1 gap-4">
+            <!-- Loading Skeletons -->
+            <div class="glass h-48 rounded-3xl animate-pulse"></div>
+            <div class="glass h-48 rounded-3xl animate-pulse"></div>
+        </div>
+    </main>
+
+    <!-- INVEST MODAL -->
+    <div id="investModal" class="fixed inset-0 z-[150] hidden items-end sm:items-center justify-center px-4 bg-slate-900/90 backdrop-blur-sm">
+        <div class="bg-[#0F172A] w-full max-w-md rounded-t-[40px] sm:rounded-[40px] overflow-hidden border border-white/10 shadow-2xl p-8 transform transition-all translate-y-full" id="modalContent">
+            <div class="flex justify-between items-start mb-6">
+                <div>
+                    <h3 id="modalPlanName" class="text-xl font-bold">Plan Name</h3>
+                    <p class="text-slate-400 text-xs">Confirm your investment</p>
+                </div>
+                <button onclick="closeModal()" class="text-slate-500"><i class="fas fa-times"></i></button>
+            </div>
+
+            <div class="space-y-4 mb-8">
+                <div class="flex justify-between py-3 border-b border-white/5">
+                    <span class="text-slate-400 text-sm">Investment Amount</span>
+                    <span id="modalPrice" class="font-bold">₦0</span>
+                </div>
+                <div class="flex justify-between py-3 border-b border-white/5">
+                    <span class="text-slate-400 text-sm">Daily Returns</span>
+                    <span id="modalROI" class="text-emerald-500 font-bold">0%</span>
+                </div>
+                <div class="flex justify-between py-3">
+                    <span class="text-slate-400 text-sm">Duration</span>
+                    <span id="modalDuration" class="font-bold">0 Days</span>
+                </div>
+            </div>
+
+            <button id="confirmBtn" class="w-full bg-[#16A34A] text-white py-5 rounded-2xl font-bold text-lg flex items-center justify-center space-x-3 active:scale-95 transition">
+                <span>Confirm Investment</span>
+                <div id="loader" class="loader hidden"></div>
+            </button>
+        </div>
+    </div>
+
+    <!-- BOTTOM APP BAR -->
+    <nav class="bottom-nav fixed bottom-0 left-0 right-0 h-20 px-6 flex justify-between items-center z-[100]">
+        <a href="dashboard.html" class="flex flex-col items-center space-y-1 text-slate-500">
+            <i class="fas fa-th-large text-xl"></i>
+            <span class="text-[10px] font-bold">Home</span>
+        </a>
+        <a href="plans.html" class="flex flex-col items-center space-y-1 text-[#16A34A]">
+            <i class="fas fa-leaf text-xl"></i>
+            <span class="text-[10px] font-bold">Invest</span>
+        </a>
+        <a href="transactions.html" class="flex flex-col items-center space-y-1 text-slate-500">
+            <i class="fas fa-exchange-alt text-xl"></i>
+            <span class="text-[10px] font-bold">History</span>
+        </a>
+        <a href="profile.html" class="flex flex-col items-center space-y-1 text-slate-500">
+            <i class="fas fa-user-circle text-xl"></i>
+            <span class="text-[10px] font-bold">Account</span>
+        </a>
+    </nav>
+
+    <script>
+        const scriptURL = 'https://script.google.com/macros/s/AKfycbw5VyXExhP7SnioJt54CUfnipvqNPIA8ygJIcEpINoQYk2-OaOVLBzhfdXSE19WG5p0aA/exec';
+        const session = JSON.parse(localStorage.getItem('greennaira_session'));
+        let selectedPlan = null;
+
+        if (!session) window.location.href = 'login.html';
+
+        async function loadPlans() {
+            try {
+                const response = await fetch(`${scriptURL}?action=getPlans&userId=${session.userId}`);
+                const data = await response.json();
+                
+                document.getElementById('currentBalance').innerText = `₦${parseFloat(data.balance).toLocaleString()}`;
+                
+                const grid = document.getElementById('plansGrid');
+                grid.innerHTML = '';
+
+                data.plans.forEach(plan => {
+                    grid.innerHTML += `
+                        <div class="glass p-6 rounded-[32px] plan-card border border-white/5">
+                            <div class="flex justify-between items-start mb-6">
+                                <div class="roi-badge px-3 py-1 rounded-full text-[10px] font-black uppercase tracking-widest text-white">
+                                    ${plan.roi}% Daily
+                                </div>
+                                <span class="text-slate-500 text-xs font-bold">${plan.duration} Days</span>
+                            </div>
+                            <h3 class="text-lg font-bold mb-1">${plan.name}</h3>
+                            <div class="flex items-baseline space-x-1 mb-6">
+                                <span class="text-emerald-500 text-2xl font-black">₦${parseFloat(plan.price).toLocaleString()}</span>
+                            </div>
+                            <button onclick="openModal('${plan.id}', '${plan.name}', ${plan.price}, ${plan.roi}, ${plan.duration})" 
+                                    class="w-full bg-white/5 hover:bg-[#16A34A] hover:text-white text-slate-300 py-3 rounded-xl font-bold text-sm transition-colors border border-white/10">
+                                Invest Now
+                            </button>
+                        </div>
+                    `;
+                });
+            } catch (err) { console.error(err); }
+        }
+
+        function openModal(id, name, price, roi, duration) {
+            selectedPlan = { id, name, price, roi, duration };
+            document.getElementById('modalPlanName').innerText = name;
+            document.getElementById('modalPrice').innerText = `₦${price.toLocaleString()}`;
+            document.getElementById('modalROI').innerText = `${roi}% Daily`;
+            document.getElementById('modalDuration').innerText = `${duration} Days`;
+            
+            const modal = document.getElementById('investModal');
+            modal.classList.remove('hidden');
+            modal.classList.add('flex');
+            setTimeout(() => document.getElementById('modalContent').classList.remove('translate-y-full'), 10);
+        }
+
+        function closeModal() {
+            document.getElementById('modalContent').classList.add('translate-y-full');
+            setTimeout(() => document.getElementById('investModal').classList.add('hidden'), 300);
+        }
+
+        document.getElementById('confirmBtn').onclick = async function() {
+            if (!selectedPlan) return;
+            
+            this.disabled = true;
+            document.getElementById('loader').classList.remove('hidden');
+
+            const payload = new FormData();
+            payload.append('action', 'invest');
+            payload.append('userId', session.userId);
+            payload.append('planId', selectedPlan.id);
+
+            try {
+                const res = await fetch(scriptURL, { method: 'POST', body: payload });
+                const result = await res.json();
+                
+                if (result.status === 'success') {
+                    alert('Investment Successful!');
+                    window.location.href = 'dashboard.html';
+                } else {
+                    alert(result.message);
+                }
+            } catch (err) {
+                alert('Connection Error');
+            } finally {
+                this.disabled = false;
+                document.getElementById('loader').classList.add('hidden');
+            }
+        };
+
+        loadPlans();
+    </script>
+</body>
+</html>

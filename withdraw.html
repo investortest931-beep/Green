@@ -1,0 +1,190 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Withdrawal | Green Naira</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;600;700;800&display=swap" rel="stylesheet">
+
+    <style>
+        :root { --primary: #16A34A; --slate: #0F172A; --accent: #FACC15; }
+        body { font-family: 'Plus Jakarta Sans', sans-serif; background-color: #020617; color: white; padding-bottom: 40px; }
+        .glass { background: rgba(255, 255, 255, 0.03); backdrop-filter: blur(10px); border: 1px solid rgba(255, 255, 255, 0.05); }
+        .form-input { background: rgba(255, 255, 255, 0.05); border: 1px solid rgba(255, 255, 255, 0.1); color: white; transition: all 0.3s ease; }
+        .form-input:focus { border-color: var(--primary); outline: none; background: rgba(255, 255, 255, 0.08); }
+        .loader { border: 2px solid rgba(255,255,255,0.3); border-top: 2px solid white; border-radius: 50%; width: 20px; height: 20px; animation: spin 1s linear infinite; display: none; }
+        @keyframes spin { 0% { transform: rotate(0deg); } 100% { transform: rotate(360deg); } }
+        .disabled-btn { background: #1e293b !important; color: #475569 !important; cursor: not-allowed; opacity: 0.7; }
+    </style>
+</head>
+<body>
+
+    <header class="p-6 flex items-center justify-between">
+        <div class="flex items-center space-x-4">
+            <a href="dashboard.html" class="w-10 h-10 glass rounded-full flex items-center justify-center text-slate-400">
+                <i class="fas fa-arrow-left"></i>
+            </a>
+            <h1 class="text-xl font-bold">Withdraw</h1>
+        </div>
+    </header>
+
+    <main class="px-6 space-y-6">
+        <!-- BALANCE DISPLAY -->
+        <div class="bg-gradient-to-br from-[#065F46] to-[#022c22] p-8 rounded-[32px] border border-white/5 shadow-2xl text-center">
+            <p class="text-emerald-500/80 text-[10px] font-black uppercase tracking-[0.2em] mb-2">Available Balance</p>
+            <h2 id="walletBalance" class="text-4xl font-black">₦0.00</h2>
+        </div>
+
+        <!-- WITHDRAWAL FORM -->
+        <div class="glass p-6 rounded-[32px] space-y-6">
+            <!-- Schedule Warning -->
+            <div id="dayNotice" class="hidden bg-amber-500/10 border border-amber-500/20 p-4 rounded-2xl text-amber-400 text-xs text-center font-bold">
+                <i class="fas fa-clock mr-2"></i>
+                Withdrawals are only open Monday to Thursday.
+            </div>
+
+            <form id="withdrawalForm" class="space-y-5">
+                <div>
+                    <label class="block text-slate-400 text-[10px] font-black uppercase tracking-widest mb-2 ml-1">Bank Name</label>
+                    <input type="text" name="bankName" required placeholder="e.g. GTBank, Kuda, OPAY" class="form-input w-full px-5 py-4 rounded-2xl">
+                </div>
+
+                <div>
+                    <label class="block text-slate-400 text-[10px] font-black uppercase tracking-widest mb-2 ml-1">Account Number</label>
+                    <input type="number" name="accNumber" required placeholder="10-digit Account Number" class="form-input w-full px-5 py-4 rounded-2xl">
+                </div>
+
+                <div>
+                    <label class="block text-slate-400 text-[10px] font-black uppercase tracking-widest mb-2 ml-1">Account Holder Name</label>
+                    <input type="text" name="accName" required placeholder="Full Name on Bank Account" class="form-input w-full px-5 py-4 rounded-2xl">
+                </div>
+
+                <div>
+                    <label class="block text-slate-400 text-[10px] font-black uppercase tracking-widest mb-2 ml-1">Amount to Withdraw (₦)</label>
+                    <input type="number" name="amount" id="withdrawAmount" required placeholder="Min: 1,000" min="1000" class="form-input w-full px-5 py-4 rounded-2xl text-lg font-bold">
+                    
+                    <div class="mt-3 space-y-1 px-1">
+                        <div class="flex justify-between text-[11px] font-bold uppercase tracking-wider">
+                            <span class="text-slate-500">Service Fee (5%):</span>
+                            <span id="feeDisplay" class="text-red-400">₦0.00</span>
+                        </div>
+                        <div class="flex justify-between text-[11px] font-bold uppercase tracking-wider">
+                            <span class="text-slate-500">You will receive:</span>
+                            <span id="receiveDisplay" class="text-emerald-500">₦0.00</span>
+                        </div>
+                    </div>
+                </div>
+
+                <button type="submit" id="submitBtn" class="w-full bg-[#16A34A] text-white py-5 rounded-2xl font-black text-lg flex items-center justify-center space-x-3 active:scale-95 transition shadow-xl shadow-green-900/20">
+                    <span id="btnText">WITHDRAW FUNDS</span>
+                    <div id="btnLoader" class="loader"></div>
+                </button>
+            </form>
+        </div>
+
+        <div class="px-2">
+            <h3 class="text-xs font-bold text-slate-400 mb-2 uppercase">Rules & Schedule</h3>
+            <ul class="text-[10px] text-slate-500 space-y-2 list-disc ml-4">
+                <li class="text-emerald-500 font-bold underline">Withdrawal Days: Monday to Thursday only.</li>
+                <li>A 5% service fee applies to all withdrawals.</li>
+                <li>Minimum withdrawal amount is ₦1,000.</li>
+                <li>Ensure account details are correct to avoid delays.</li>
+            </ul>
+        </div>
+    </main>
+
+    <script>
+        const scriptURL = 'https://script.google.com/macros/s/AKfycbyI4vMJTDIClqAVKFbgbZ5E2o_8pooyuZ8KUyW7tQWrqgYBpBDIrM_Vy0i8xewQPOWQ8Q/exec';
+        const session = JSON.parse(localStorage.getItem('greennaira_session'));
+
+        if (!session) window.location.href = 'login.html';
+
+        // Schedule: 1=Mon, 2=Tue, 3=Wed, 4=Thu
+        function checkWithdrawalDay() {
+            const day = new Date().getDay();
+            const isAllowed = (day >= 1 && day <= 4);
+            
+            if (!isAllowed) {
+                const btn = document.getElementById('submitBtn');
+                const notice = document.getElementById('dayNotice');
+                btn.disabled = true;
+                btn.classList.add('disabled-btn');
+                btn.innerHTML = 'WITHDRAWAL CLOSED';
+                notice.classList.remove('hidden');
+            }
+            return isAllowed;
+        }
+
+        async function loadBalance() {
+            try {
+                const resp = await fetch(`${scriptURL}?action=getBalance&userId=${session.userId}`);
+                const data = await resp.json();
+                if (data.balance !== undefined) {
+                    document.getElementById('walletBalance').innerText = "₦" + parseFloat(data.balance).toLocaleString();
+                    session.walletBalance = data.balance;
+                    localStorage.setItem('greennaira_session', JSON.stringify(session));
+                }
+            } catch (e) { console.error("Balance sync failed"); }
+        }
+
+        document.getElementById('withdrawAmount').addEventListener('input', function(e) {
+            const val = parseFloat(e.target.value) || 0;
+            const fee = val * 0.05;
+            const receive = val - fee;
+            document.getElementById('feeDisplay').innerText = "₦" + fee.toLocaleString();
+            document.getElementById('receiveDisplay').innerText = "₦" + (receive > 0 ? receive : 0).toLocaleString();
+        });
+
+        document.getElementById('withdrawalForm').addEventListener('submit', async function(e) {
+            e.preventDefault();
+            if (!checkWithdrawalDay()) {
+                alert("Withdrawals are only processed Monday through Thursday.");
+                return;
+            }
+
+            const submitBtn = document.getElementById('submitBtn');
+            const btnText = document.getElementById('btnText');
+            const loader = document.getElementById('btnLoader');
+            const amt = parseFloat(document.getElementById('withdrawAmount').value);
+            
+            if (amt > session.walletBalance) {
+                alert("Insufficient funds in your wallet.");
+                return;
+            }
+
+            submitBtn.disabled = true;
+            btnText.innerText = "PROCESSING...";
+            loader.style.display = "block";
+
+            const formData = new FormData(this);
+            formData.append('userId', session.userId);
+            formData.append('action', 'withdraw');
+
+            try {
+                const response = await fetch(scriptURL, { method: 'POST', body: formData });
+                const result = await response.json();
+
+                if (result.status === 'success') {
+                    alert("Withdrawal request submitted! It will be reviewed soon.");
+                    window.location.href = 'dashboard.html';
+                } else {
+                    alert(result.message);
+                }
+            } catch (error) {
+                alert("Connection error. Try again.");
+            } finally {
+                if (checkWithdrawalDay()) {
+                    submitBtn.disabled = false;
+                    btnText.innerText = "WITHDRAW FUNDS";
+                }
+                loader.style.display = "none";
+            }
+        });
+
+        loadBalance();
+        checkWithdrawalDay();
+    </script>
+</body>
+</html>

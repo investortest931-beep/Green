@@ -1,0 +1,159 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Login | Green Naira</title>
+    
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700;800&display=swap" rel="stylesheet">
+
+    <style>
+        :root { --primary: #16A34A; --slate: #0F172A; --accent: #FACC15; }
+        body { font-family: 'Inter', sans-serif; background-color: var(--slate); color: white; }
+        .form-input { 
+            background: rgba(255, 255, 255, 0.05); 
+            border: 1px solid rgba(255, 255, 255, 0.1); 
+            color: white; transition: all 0.3s ease; 
+        }
+        .form-input:focus { border-color: var(--primary); background: rgba(255, 255, 255, 0.08); outline: none; }
+        .loader { 
+            border: 3px solid rgba(255,255,255,0.3); border-top: 3px solid white; 
+            border-radius: 50%; width: 20px; height: 20px; animation: spin 1s linear infinite; display: none; 
+        }
+        @keyframes spin { 0% { transform: rotate(0deg); } 100% { transform: rotate(3600deg); } }
+    </style>
+</head>
+<body class="flex flex-col min-h-screen">
+
+    <nav class="p-6">
+        <div class="max-w-7xl mx-auto flex justify-between items-center">
+            <a href="index.html" class="flex items-center space-x-2">
+                <div class="bg-[#16A34A] p-1.5 rounded-lg"><i class="fas fa-leaf text-white text-sm"></i></div>
+                <span class="text-xl font-bold">Green<span class="text-[#16A34A]">Naira</span></span>
+            </a>
+            <a href="register.html" class="border border-white/20 px-6 py-2 rounded-full text-sm font-bold hover:border-[#FACC15] hover:text-[#FACC15] transition">Register</a>
+        </div>
+    </nav>
+
+    <main class="flex-grow flex items-center justify-center px-4 py-12">
+        <div class="w-full max-w-md">
+            <div class="text-center mb-10">
+                <h1 class="text-4xl font-extrabold mb-2">Welcome Back 👋</h1>
+                <p class="text-slate-400">Log in to manage your investments.</p>
+            </div>
+
+            <form id="loginForm" class="bg-white/5 p-8 rounded-[32px] border border-white/5 shadow-2xl space-y-6">
+                <div>
+                    <label class="block text-slate-400 text-[10px] font-black uppercase tracking-widest mb-2 ml-1">Username or Email</label>
+                    <input type="text" name="identifier" required placeholder="Enter your username" class="form-input w-full px-5 py-4 rounded-2xl">
+                </div>
+
+                <div>
+                    <label class="block text-slate-400 text-[10px] font-black uppercase tracking-widest mb-2 ml-1">Password</label>
+                    <div class="relative">
+                        <input type="password" id="password" name="password" required placeholder="••••••••" class="form-input w-full px-5 py-4 rounded-2xl">
+                        <button type="button" onclick="togglePass()" class="absolute right-4 top-4 text-slate-500 hover:text-white">
+                            <i id="eyeIcon" class="far fa-eye"></i>
+                        </button>
+                    </div>
+                </div>
+
+                <button type="submit" id="submitBtn" class="w-full bg-[#16A34A] text-white py-5 rounded-2xl font-black text-lg flex items-center justify-center space-x-3 hover:bg-[#15803d] transition-all transform active:scale-95 shadow-xl">
+                    <span id="btnText">LOG IN</span>
+                    <div id="btnLoader" class="loader"></div>
+                </button>
+
+                <div class="text-center space-y-4 pt-4">
+                    <a href="forgot-password.html" class="block text-slate-500 hover:text-[#FACC15] text-sm transition">Forgotten Password?</a>
+                    <p class="text-slate-400 text-sm">
+                        Don't have an account? <a href="register.html" class="text-[#16A34A] font-bold underline">Create one free</a>
+                    </p>
+                </div>
+            </form>
+        </div>
+    </main>
+
+    <!-- CUSTOM ALERT -->
+    <div id="customAlert" class="fixed inset-0 z-[100] hidden items-center justify-center px-4 bg-slate-900/90 backdrop-blur-md">
+        <div class="bg-white rounded-[32px] w-full max-w-sm overflow-hidden shadow-2xl transform scale-95 transition-all">
+            <div id="alertHeader" class="bg-[#16A34A] p-8 text-center text-white">
+                <i id="alertIcon" class="fas fa-check-circle text-5xl mb-4"></i>
+                <h3 id="alertTitle" class="text-xl font-bold">Alert</h3>
+            </div>
+            <div class="p-8 text-center">
+                <p id="alertMessage" class="text-slate-600 mb-8"></p>
+                <button onclick="closeAlert()" class="w-full py-4 bg-slate-900 text-white rounded-2xl font-bold">Okay</button>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        // UPDATE WITH YOUR DEPLOYED WEB APP URL
+        const scriptURL = 'https://script.google.com/macros/s/AKfycbxqsdGOJSSA4p0TEuIl8eedXsM3_0UUJU6ipqji-iSkQP-J-1AJw1ElNLtLHDslNvXN/exec';
+
+        function togglePass() {
+            const input = document.getElementById('password');
+            const icon = document.getElementById('eyeIcon');
+            input.type = input.type === 'password' ? 'text' : 'password';
+            icon.classList.toggle('fa-eye');
+            icon.classList.toggle('fa-eye-slash');
+        }
+
+        function showAlert(title, message, type = 'success') {
+            const modal = document.getElementById('customAlert');
+            const header = document.getElementById('alertHeader');
+            document.getElementById('alertTitle').innerText = title;
+            document.getElementById('alertMessage').innerText = message;
+            header.className = type === 'error' ? 'bg-red-500 p-8 text-center text-white' : 'bg-[#16A34A] p-8 text-center text-white';
+            modal.classList.remove('hidden');
+            modal.classList.add('flex');
+        }
+
+        function closeAlert() { document.getElementById('customAlert').classList.add('hidden'); }
+
+        document.getElementById('loginForm').addEventListener('submit', async function(e) {
+            e.preventDefault();
+            const submitBtn = document.getElementById('submitBtn');
+            const btnText = document.getElementById('btnText');
+            const loader = document.getElementById('btnLoader');
+
+            submitBtn.disabled = true;
+            btnText.innerText = "VERIFYING...";
+            loader.style.display = "block";
+
+            try {
+                const formData = new FormData(this);
+                const response = await fetch(scriptURL, { method: 'POST', body: formData });
+                const result = await response.json();
+
+                if (result.status === 'success') {
+                    // SAVE SESSION (Matches your JSON schema)
+                    const sessionData = {
+                        userId: result.data.userId,
+                        fullName: result.data.fullName,
+                        email: result.data.email,
+                        walletBalance: result.data.walletBalance,
+                        referralCode: result.data.referralCode,
+                        isLoggedIn: true,
+                        loginTime: new Date().toISOString()
+                    };
+                    localStorage.setItem('greennaira_session', JSON.stringify(sessionData));
+                    
+                    showAlert('Success', 'Welcome back! Redirecting...', 'success');
+                    setTimeout(() => window.location.href = 'dashboard.html', 1500);
+                } else {
+                    showAlert('Login Failed', result.message, 'error');
+                }
+            } catch (err) {
+                showAlert('Error', 'Could not connect to server.', 'error');
+            } finally {
+                submitBtn.disabled = false;
+                btnText.innerText = "LOG IN";
+                loader.style.display = "none";
+            }
+        });
+    </script>
+</body>
+</html>

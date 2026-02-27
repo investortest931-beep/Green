@@ -1,0 +1,142 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Admin Approvals | Green Naira</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;600;700&display=swap" rel="stylesheet">
+    <style>
+        body { font-family: 'Plus Jakarta Sans', sans-serif; background-color: #020617; color: white; }
+        .glass { background: rgba(255, 255, 255, 0.03); backdrop-filter: blur(10px); border: 1px solid rgba(255, 255, 255, 0.05); }
+        .loader { border: 2px solid rgba(255,255,255,0.3); border-top: 2px solid #16A34A; border-radius: 50%; width: 20px; height: 20px; animation: spin 1s linear infinite; display: inline-block; }
+        @keyframes spin { 0% { transform: rotate(0deg); } 100% { transform: rotate(360deg); } }
+    </style>
+</head>
+<body class="p-6">
+
+    <header class="mb-8 flex justify-between items-center">
+        <div>
+            <h1 class="text-2xl font-black text-emerald-500">Admin Panel</h1>
+            <p class="text-slate-400 text-sm">Verify and Approve Deposits</p>
+        </div>
+        <button onclick="loadPending()" class="w-10 h-10 glass rounded-full flex items-center justify-center hover:bg-white/10 transition">
+            <i class="fas fa-sync-alt"></i>
+        </button>
+    </header>
+
+    <div id="loading" class="text-center py-20">
+        <div class="loader mb-4"></div>
+        <p class="text-slate-500 font-bold uppercase tracking-widest text-xs">Fetching Pending Requests...</p>
+    </div>
+
+    <div id="emptyState" class="hidden text-center py-20 glass rounded-[32px]">
+        <i class="fas fa-check-circle text-4xl text-slate-700 mb-4"></i>
+        <p class="text-slate-500 font-bold">No pending deposits found.</p>
+    </div>
+
+    <main id="depositList" class="space-y-4">
+        <!-- Transaction Cards will load here -->
+    </main>
+
+    <script>
+        const scriptURL = 'https://script.google.com/macros/s/AKfycbzTG0JSl6RejdSMg-yVBu49TZqhhKUiHmBN21l5PIg1V4kZ1MPVbfIoyPVJ3YVkIg8E/exec';
+
+        async function loadPending() {
+            const list = document.getElementById('depositList');
+            const loader = document.getElementById('loading');
+            const empty = document.getElementById('emptyState');
+            
+            list.innerHTML = '';
+            loader.style.display = 'block';
+            empty.style.display = 'none';
+
+            try {
+                const response = await fetch(`${scriptURL}?action=getPending`);
+                const data = await response.json();
+                
+                loader.style.display = 'none';
+                
+                if (data.length === 0) {
+                    empty.style.display = 'block';
+                    return;
+                }
+
+                data.forEach(txn => {
+                    const card = `
+                        <div class="glass p-6 rounded-[28px] border-l-4 border-yellow-500" id="card-${txn.id}">
+                            <div class="flex justify-between items-start mb-4">
+                                <div>
+                                    <p class="text-[10px] text-slate-500 font-bold uppercase tracking-wider mb-1">Transaction ID: ${txn.id}</p>
+                                    <h3 class="text-lg font-bold">₦${parseFloat(txn.amount).toLocaleString()}</h3>
+                                </div>
+                                <span class="bg-yellow-500/10 text-yellow-500 text-[10px] font-black px-2 py-1 rounded-md uppercase">Pending</span>
+                            </div>
+                            
+                            <div class="grid grid-cols-2 gap-4 mb-6 text-sm">
+                                <div>
+                                    <p class="text-slate-500 text-xs">User ID</p>
+                                    <p class="font-medium">${txn.userId}</p>
+                                </div>
+                                <div>
+                                    <p class="text-slate-500 text-xs">Reference</p>
+                                    <p class="font-medium text-emerald-400">${txn.refCode}</p>
+                                </div>
+                                <div class="col-span-2">
+                                    <p class="text-slate-500 text-xs">Date Submitted</p>
+                                    <p class="font-medium">${new Date(txn.date).toLocaleString()}</p>
+                                </div>
+                            </div>
+
+                            <div class="flex space-x-3">
+                                <button onclick="handleAction('${txn.id}', 'Rejected')" class="flex-1 py-3 rounded-xl bg-red-500/10 text-red-500 font-bold text-xs hover:bg-red-500 hover:text-white transition">Reject</button>
+                                <button onclick="handleAction('${txn.id}', 'Approved')" class="flex-[2] py-3 rounded-xl bg-[#16A34A] text-white font-bold text-xs shadow-lg shadow-green-900/20 active:scale-95 transition">Approve & Fund</button>
+                            </div>
+                        </div>
+                    `;
+                    list.innerHTML += card;
+                });
+            } catch (err) {
+                alert("Failed to fetch deposits. Check backend deployment.");
+            }
+        }
+
+        async function handleAction(id, status) {
+            if (!confirm(`Are you sure you want to ${status} this deposit?`)) return;
+
+            const btn = event.target;
+            const originalText = btn.innerText;
+            btn.disabled = true;
+            btn.innerText = "Processing...";
+
+            const formData = new FormData();
+            formData.append('action', 'updateStatus');
+            formData.append('txnId', id);
+            formData.append('status', status);
+
+            try {
+                const response = await fetch(scriptURL, { method: 'POST', body: formData });
+                const result = await response.json();
+                
+                if (result.status === 'success') {
+                    document.getElementById(`card-${id}`).style.opacity = '0.3';
+                    document.getElementById(`card-${id}`).style.pointerEvents = 'none';
+                    alert(`Transaction ${status} successfully!`);
+                    loadPending();
+                } else {
+                    alert(result.message);
+                    btn.disabled = false;
+                    btn.innerText = originalText;
+                }
+            } catch (err) {
+                alert("Error communicating with server.");
+                btn.disabled = false;
+                btn.innerText = originalText;
+            }
+        }
+
+        loadPending();
+    </script>
+</body>
+</html>

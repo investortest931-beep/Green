@@ -1,0 +1,188 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Refer & Earn | Green Naira</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;600;700;800&display=swap" rel="stylesheet">
+
+    <style>
+        :root { --primary: #16A34A; --slate: #0F172A; --accent: #FACC15; }
+        body { font-family: 'Plus Jakarta Sans', sans-serif; background-color: #020617; color: white; padding-bottom: 40px; }
+        .glass { background: rgba(255, 255, 255, 0.03); backdrop-filter: blur(10px); border: 1px solid rgba(255, 255, 255, 0.05); }
+        .progress-bar { height: 8px; border-radius: 4px; background: rgba(255,255,255,0.05); overflow: hidden; }
+        .progress-fill { height: 100%; background: linear-gradient(90deg, #16A34A, #FACC15); width: 0%; transition: width 1s ease-out; }
+        .no-scrollbar::-webkit-scrollbar { display: none; }
+    </style>
+</head>
+<body>
+
+    <header class="p-6 flex items-center justify-between sticky top-0 z-50 bg-[#020617]/80 backdrop-blur-md">
+        <div class="flex items-center space-x-4">
+            <a href="dashboard.html" class="w-10 h-10 glass rounded-full flex items-center justify-center text-slate-400">
+                <i class="fas fa-arrow-left"></i>
+            </a>
+            <h1 class="text-xl font-bold">Referrals</h1>
+        </div>
+    </header>
+
+    <main class="px-6 space-y-6">
+        
+        <!-- TOP STATS -->
+        <div class="grid grid-cols-2 gap-4">
+            <div class="glass p-5 rounded-[28px] border-b-2 border-emerald-500">
+                <p class="text-[10px] text-slate-500 font-black uppercase tracking-widest mb-1">Total Referrals</p>
+                <h3 id="totalRefs" class="text-2xl font-black">0</h3>
+            </div>
+            <div class="glass p-5 rounded-[28px] border-b-2 border-accent">
+                <p class="text-[10px] text-slate-500 font-black uppercase tracking-widest mb-1">Bonus Earned</p>
+                <h3 id="totalBonus" class="text-2xl font-black text-emerald-500">₦0</h3>
+            </div>
+        </div>
+
+        <!-- REFERRAL LINK SECTION -->
+        <div class="glass p-6 rounded-[32px] space-y-4">
+            <div>
+                <h3 class="text-sm font-bold text-white mb-1">Your Referral Link</h3>
+                <p class="text-xs text-slate-500">Earn ₦1,500 for every friend who joins and deposits.</p>
+            </div>
+            
+            <div class="relative">
+                <input type="text" id="refLink" readonly class="w-full bg-white/5 border border-white/10 rounded-2xl py-4 pl-5 pr-24 text-sm font-medium text-emerald-400 focus:outline-none">
+                <button onclick="copyLink()" class="absolute right-2 top-2 bottom-2 bg-emerald-600 px-4 rounded-xl text-[10px] font-black uppercase tracking-tighter hover:bg-emerald-500 transition active:scale-95">
+                    Copy Link
+                </button>
+            </div>
+
+            <button onclick="shareLink()" class="w-full glass py-4 rounded-2xl flex items-center justify-center space-x-2 text-xs font-bold border-white/10 active:scale-95 transition">
+                <i class="fas fa-share-alt text-accent"></i>
+                <span>SHARE WITH FRIENDS</span>
+            </button>
+        </div>
+
+        <!-- PROGRESS TOWARDS NEXT GOAL -->
+        <div class="glass p-6 rounded-[32px] space-y-4">
+            <div class="flex justify-between items-end">
+                <div>
+                    <h3 class="text-xs font-black uppercase tracking-widest text-slate-400">Milestone</h3>
+                    <p class="text-sm font-bold mt-1">First 10 Referrals</p>
+                </div>
+                <span id="progressText" class="text-xs font-black text-emerald-500">0/10</span>
+            </div>
+            <div class="progress-bar">
+                <div id="progressFill" class="progress-fill"></div>
+            </div>
+            <p class="text-[10px] text-slate-500 leading-relaxed italic">
+                *Rewards are automatically credited to your wallet once your referral makes their first deposit.
+            </p>
+        </div>
+
+        <!-- RECENT REFERRALS -->
+        <div class="space-y-4">
+            <h3 class="text-xs font-black uppercase tracking-widest text-slate-400 ml-1">Recent Signups</h3>
+            <div id="refList" class="space-y-3">
+                <!-- Referral Rows -->
+                <div class="animate-pulse flex space-x-4 glass p-4 rounded-2xl">
+                    <div class="rounded-full bg-white/5 h-10 w-10"></div>
+                    <div class="flex-1 space-y-2 py-1">
+                        <div class="h-2 bg-white/5 rounded w-3/4"></div>
+                        <div class="h-2 bg-white/5 rounded w-1/2"></div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+    </main>
+
+    <script>
+        const scriptURL = 'https://script.google.com/macros/s/AKfycbzZ1KioxxtxK17WhWXd8WdH5FpPXmj9XV1uExo6BfN7khflmYePvSpi4Gi4iQcJ1l8U/exec';
+        const session = JSON.parse(localStorage.getItem('greennaira_session'));
+
+        if (!session) window.location.href = 'login.html';
+
+        // Set Link
+        const fullRefLink = `${window.location.origin}/signup.html?ref=${session.referralCode}`;
+        document.getElementById('refLink').value = fullRefLink;
+
+        async function loadReferralData() {
+            try {
+                const response = await fetch(`${scriptURL}?userId=${session.userId}`);
+                const data = await response.json();
+                
+                // Update Stats
+                document.getElementById('totalRefs').innerText = data.totalRefs;
+                document.getElementById('totalBonus').innerText = "₦" + data.totalBonus.toLocaleString();
+                
+                // Update Progress
+                const progress = Math.min((data.totalRefs / 10) * 100, 100);
+                document.getElementById('progressFill').style.width = `${progress}%`;
+                document.getElementById('progressText').innerText = `${data.totalRefs}/10`;
+
+                // Update List
+                const list = document.getElementById('refList');
+                list.innerHTML = '';
+
+                if (data.referrals.length === 0) {
+                    list.innerHTML = `<p class="text-center py-6 text-slate-600 text-xs font-bold glass rounded-2xl">No referrals yet.</p>`;
+                    return;
+                }
+
+                data.referrals.forEach(ref => {
+                    const statusColor = ref.status === 'Paid' ? 'text-emerald-500' : 'text-amber-500';
+                    const iconColor = ref.status === 'Paid' ? 'bg-emerald-500/10' : 'bg-amber-500/10';
+                    
+                    list.innerHTML += `
+                        <div class="glass p-4 rounded-2xl flex items-center justify-between border-l-2 ${ref.status === 'Paid' ? 'border-emerald-500' : 'border-slate-800'}">
+                            <div class="flex items-center space-x-3">
+                                <div class="w-10 h-10 rounded-full ${iconColor} flex items-center justify-center text-xs font-bold text-white">
+                                    ${ref.name.charAt(0)}
+                                </div>
+                                <div>
+                                    <h4 class="text-xs font-bold text-white">${ref.name}</h4>
+                                    <p class="text-[9px] text-slate-500 uppercase font-black">${ref.date}</p>
+                                </div>
+                            </div>
+                            <div class="text-right">
+                                <p class="text-[10px] font-black ${statusColor} uppercase tracking-tighter">${ref.status}</p>
+                                <p class="text-[9px] text-slate-500 font-bold">₦${ref.bonus.toLocaleString()}</p>
+                            </div>
+                        </div>
+                    `;
+                });
+
+            } catch (err) {
+                console.error("Error loading referrals:", err);
+            }
+        }
+
+        function copyLink() {
+            const copyText = document.getElementById("refLink");
+            copyText.select();
+            copyText.setSelectionRange(0, 99999);
+            document.execCommand("copy");
+            
+            const btn = event.target;
+            const originalText = btn.innerText;
+            btn.innerText = "COPIED!";
+            setTimeout(() => btn.innerText = originalText, 2000);
+        }
+
+        function shareLink() {
+            if (navigator.share) {
+                navigator.share({
+                    title: 'Join Green Naira',
+                    text: 'Invest and earn daily with Green Naira. Join using my link!',
+                    url: fullRefLink,
+                });
+            } else {
+                copyLink();
+                alert("Link copied to clipboard! Share it with your friends.");
+            }
+        }
+
+        loadReferralData();
+    </script>
+</body>
+</html>
