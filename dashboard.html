@@ -153,33 +153,29 @@
             <span class="text-[10px] font-bold">Account</span>
         </a>
     </nav>
-<!-- WhatsApp Floating Support Button -->
-<div class="fixed bottom-6 right-6 z-[100] group">
+<!-- WhatsApp Top Support Button -->
+<div class="fixed top-6 right-6 z-[100] group">
     <!-- Tooltip (visible on hover) -->
-    <div class="absolute bottom-full right-0 mb-4 opacity-0 group-hover:opacity-100 transition-opacity duration-300 pointer-events-none">
+    <div class="absolute top-full right-0 mt-3 opacity-0 group-hover:opacity-100 transition-opacity duration-300 pointer-events-none">
         <div class="bg-slate-900 text-white text-[10px] font-bold px-4 py-2 rounded-xl shadow-2xl border border-white/10 whitespace-nowrap">
-            Chat with Support 💬
+            Support Online 💬
         </div>
     </div>
 
-    <!-- Notification Pulse (Decorative) -->
-    <div class="absolute inset-0 bg-emerald-500 rounded-full animate-ping opacity-20"></div>
-
-    <!-- Main Button -->
+    <!-- Main Floating Button -->
     <a href="https://wa.me/2347073253657?text=Hello%20Green%20Naira%20Support,%20I%20need%20assistance." 
        target="_blank"
-       class="relative w-14 h-14 bg-[#16A34A] rounded-full shadow-2xl shadow-emerald-900/40 flex items-center justify-center hover:scale-110 active:scale-95 transition-all duration-300 border-2 border-white/10">
+       class="relative w-12 h-12 bg-[#16A34A] rounded-full shadow-2xl shadow-emerald-900/20 flex items-center justify-center hover:scale-110 active:scale-95 transition-all duration-300 border-2 border-white/20">
         
-        <i class="fab fa-whatsapp text-white text-2xl"></i>
+        <i class="fab fa-whatsapp text-white text-xl"></i>
         
-        <!-- Red dot notification indicator -->
-        <div class="absolute top-0 right-0 w-3.5 h-3.5 bg-red-500 border-2 border-[#020617] rounded-full"></div>
+        <!-- Live Status indicator -->
+        <div class="absolute -top-1 -right-1 flex h-3 w-3">
+            <span class="animate-ping absolute inline-flex h-full w-full rounded-full bg-emerald-400 opacity-75"></span>
+            <span class="relative inline-flex rounded-full h-3 w-3 bg-emerald-500 border border-slate-900"></span>
+        </div>
     </a>
 </div>
-
-<!-- Ensure you have FontAwesome linked in your dashboard <head> -->
-<!-- <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" rel="stylesheet"> -->
-
 
     <script>
         const scriptURL = 'https://script.google.com/macros/s/AKfycbxZKNf6UCQLUkVrR8hoeIoIg0XyPs7T-50T0h-_JHHLMWfT6lhzAYOQEc0UuzDn1xKklw/exec';
