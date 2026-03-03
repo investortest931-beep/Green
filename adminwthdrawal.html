@@ -1,0 +1,148 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Admin Withdrawals | Green Naira</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;600;700&display=swap" rel="stylesheet">
+    <style>
+        body { font-family: 'Plus Jakarta Sans', sans-serif; background-color: #020617; color: white; }
+        .glass { background: rgba(255, 255, 255, 0.03); backdrop-filter: blur(10px); border: 1px solid rgba(255, 255, 255, 0.05); }
+        .loader { border: 2px solid rgba(255,255,255,0.3); border-top: 2px solid #ef4444; border-radius: 50%; width: 20px; height: 20px; animation: spin 1s linear infinite; display: inline-block; }
+        @keyframes spin { 0% { transform: rotate(0deg); } 100% { transform: rotate(360deg); } }
+    </style>
+</head>
+<body class="p-6">
+
+    <header class="mb-8 flex justify-between items-center">
+        <div>
+            <h1 class="text-2xl font-black text-red-500">Withdrawal Panel</h1>
+            <p class="text-slate-400 text-sm">Review and Payout Requests</p>
+        </div>
+        <button onclick="loadPending()" class="w-10 h-10 glass rounded-full flex items-center justify-center hover:bg-white/10 transition">
+            <i class="fas fa-sync-alt"></i>
+        </button>
+    </header>
+
+    <div id="loading" class="text-center py-20">
+        <div class="loader mb-4"></div>
+        <p class="text-slate-500 font-bold uppercase tracking-widest text-xs">Fetching Payout Requests...</p>
+    </div>
+
+    <div id="emptyState" class="hidden text-center py-20 glass rounded-[32px]">
+        <i class="fas fa-hand-holding-usd text-4xl text-slate-700 mb-4"></i>
+        <p class="text-slate-500 font-bold">No pending withdrawals.</p>
+    </div>
+
+    <main id="withdrawList" class="space-y-4">
+        <!-- Withdrawal Cards -->
+    </main>
+
+    <script>
+        const scriptURL = 'https://script.google.com/macros/s/AKfycbxWkoEo5UimBqVzrWjCABTQ01S6aha3QyF5Mlx6zu9cHs6Y9Zk7j5HLfbEWE_KLliyfww/exec';
+
+        async function loadPending() {
+            const list = document.getElementById('withdrawList');
+            const loader = document.getElementById('loading');
+            const empty = document.getElementById('emptyState');
+            
+            list.innerHTML = '';
+            loader.style.display = 'block';
+            empty.style.display = 'none';
+
+            try {
+                const response = await fetch(`${scriptURL}?action=getPending`);
+                const data = await response.json();
+                
+                loader.style.display = 'none';
+                
+                if (data.length === 0) {
+                    empty.style.display = 'block';
+                    return;
+                }
+
+                data.forEach(txn => {
+                    const fee = txn.amount * 0.05;
+                    const net = txn.amount - fee;
+                    
+                    const card = `
+                        <div class="glass p-6 rounded-[28px] border-l-4 border-red-500" id="card-${txn.id}">
+                            <div class="flex justify-between items-start mb-4">
+                                <div>
+                                    <p class="text-[10px] text-slate-500 font-bold uppercase tracking-wider mb-1">ID: ${txn.id}</p>
+                                    <h3 class="text-lg font-bold">₦${parseFloat(txn.amount).toLocaleString()}</h3>
+                                    <p class="text-xs text-red-400 font-bold">Pay Net: ₦${net.toLocaleString()}</p>
+                                </div>
+                                <span class="bg-red-500/10 text-red-500 text-[10px] font-black px-2 py-1 rounded-md uppercase tracking-tighter">Withdrawal</span>
+                            </div>
+                            
+                            <div class="bg-white/5 p-4 rounded-2xl mb-6 text-sm space-y-2">
+                                <div class="flex justify-between">
+                                    <span class="text-slate-500 text-xs">User ID:</span>
+                                    <span class="font-medium">${txn.userId}</span>
+                                </div>
+                                <div class="flex justify-between">
+                                    <span class="text-slate-500 text-xs">Bank Details:</span>
+                                    <span class="font-medium text-right text-emerald-400">${txn.refCode}</span>
+                                </div>
+                            </div>
+
+                            <div class="flex space-x-3">
+                                <button onclick="handleAction('${txn.id}', 'Rejected')" class="flex-1 py-4 rounded-xl bg-slate-800 text-slate-400 font-bold text-xs hover:bg-red-500/20 hover:text-red-500 transition">
+                                    Reject & Refund
+                                </button>
+                                <button onclick="handleAction('${txn.id}', 'Approved')" class="flex-1 py-4 rounded-xl bg-emerald-600 text-white font-black text-xs shadow-lg shadow-emerald-900/20 active:scale-95 transition">
+                                    Mark as Paid
+                                </button>
+                            </div>
+                        </div>
+                    `;
+                    list.innerHTML += card;
+                });
+            } catch (err) {
+                alert("Error loading data.");
+            }
+        }
+
+        async function handleAction(id, status) {
+            const confirmMsg = status === 'Rejected' 
+                ? "Reject this withdrawal? Money will be REFUNDED to the user wallet." 
+                : "Have you PAID this user? Confirm payout.";
+            
+            if (!confirm(confirmMsg)) return;
+
+            const btn = event.target;
+            btn.disabled = true;
+            btn.innerText = "UPDATING...";
+
+            const formData = new FormData();
+            formData.append('action', 'updateStatus');
+            formData.append('txnId', id);
+            formData.append('status', status);
+
+            try {
+                const response = await fetch(scriptURL, { method: 'POST', body: formData });
+                const result = await response.json();
+                
+                if (result.status === 'success') {
+                    document.getElementById(`card-${id}`).remove();
+                    if (document.getElementById('withdrawList').children.length === 0) {
+                        document.getElementById('emptyState').style.display = 'block';
+                    }
+                } else {
+                    alert(result.message);
+                    btn.disabled = false;
+                    btn.innerText = status === 'Rejected' ? 'Reject' : 'Mark as Paid';
+                }
+            } catch (err) {
+                alert("Network error.");
+                btn.disabled = false;
+            }
+        }
+
+        loadPending();
+    </script>
+</body>
+</html>
